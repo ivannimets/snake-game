@@ -15,13 +15,26 @@ class GameScene: SKScene {
     var bestScore: SKLabelNode!
     var playButton:SKShapeNode!
     
+    var game: GameManager!
+    
     override func didMove(to view: SKView) {
         initializeMenu()
+        game = GameManager()
     }
     
     
    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNodes = self.nodes(at: location)
+            for node in touchedNodes {
+                if node.name == "play_button" {
+                    startGame()
+                }
+            }
+        }
+            
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -59,5 +72,8 @@ class GameScene: SKScene {
         path.addLines(between: [topCorner, bottomCorner, middle])
         playButton.path = path
         self.addChild(playButton)
+    }
+    private func startGame() {
+        print("start game!!!")
     }
 }
