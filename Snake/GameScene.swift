@@ -53,7 +53,6 @@ class GameScene: SKScene {
         gamelogo.zPosition = 1
         gamelogo.position = CGPoint(x: 0, y: (frame.size.height / 2) - 200)
         gamelogo.fontSize = 60
-        gamelogo.isHidden = true
         gamelogo.text = "snake"
         gamelogo.fontColor = SKColor.red
         self.addChild(gamelogo)
@@ -62,7 +61,6 @@ class GameScene: SKScene {
         bestScore.zPosition = 1
         bestScore.position = CGPoint(x: 0, y: gamelogo.position.y - 50)
         bestScore.fontSize = 40
-        bestScore.isHidden = true
         bestScore.text = "Best Score : 0"
         bestScore.fontColor = SKColor.white
         self.addChild(bestScore)
@@ -72,7 +70,6 @@ class GameScene: SKScene {
         playButton.zPosition = 1
         playButton.position = CGPoint(x: 0, y: (frame.size.height / -2) + 600)
         playButton.fillColor = SKColor.white
-        playButton.isHidden = true
         let topCorner = CGPoint(x: -100, y: 200)
         let bottomCorner = CGPoint(x: -100, y: 0)
         let middle = CGPoint(x: 100, y: 100)
@@ -93,15 +90,21 @@ class GameScene: SKScene {
             self.playButton.isHidden = true
         }
         let bottomCenter = CGPoint(x: 0, y: (frame.size.height / -2)+20)
-        bestScore.run(SKAction.move(to: bottomCenter,duration:0.5))
-        
+        bestScore.run(SKAction.move(to: bottomCenter,duration:0.5)) {
+            self.gameBackground.setScale(0)
+            self.currentScore.setScale(0)
+            self.gameBackground.isHidden = false
+            self.currentScore.isHidden = false
+            self.gameBackground.run(SKAction.scale(to: 1, duration: 0.4))
+            self.currentScore.run(SKAction.scale(to: 1, duration: 0.4))
+        }
     }
     private func initializeGameView() {
         currentScore = SKLabelNode(fontNamed: "ArialRoundedMTBold")
         currentScore.zPosition = 1
         currentScore.position = CGPoint(x: 0, y: (frame.size.height / -2) + 60)
         currentScore.fontSize = 40
-        currentScore.isHidden = false
+        currentScore.isHidden = true
         currentScore.text = "Score: 0"
         currentScore.fontColor = SKColor.white
         self.addChild(currentScore)
@@ -117,7 +120,7 @@ class GameScene: SKScene {
         gameBackground = SKShapeNode(rect: rect, cornerRadius: 0.02)
         gameBackground.fillColor = SKColor.darkGray
         gameBackground.zPosition = 2
-        gameBackground.isHidden = false
+        gameBackground.isHidden = true
         self.addChild(gameBackground)
         
         createGameBoard(width: width, height: height, cellWidth: cellWidth, numRows: numRows, numCols: numCols)
