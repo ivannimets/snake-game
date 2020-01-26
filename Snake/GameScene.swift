@@ -24,7 +24,7 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         initializeMenu()
-        game = GameManager()
+        game = GameManager(scene: self)
         initializeGameView()
     }
     
@@ -97,7 +97,9 @@ class GameScene: SKScene {
             self.currentScore.isHidden = false
             self.gameBackground.run(SKAction.scale(to: 1, duration: 0.4))
             self.currentScore.run(SKAction.scale(to: 1, duration: 0.4))
+            self.game.initGame()
         }
+        
     }
     private func initializeGameView() {
         currentScore = SKLabelNode(fontNamed: "ArialRoundedMTBold")
