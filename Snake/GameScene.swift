@@ -13,8 +13,10 @@ class GameScene: SKScene {
     //обявляем контент строки
     var gamelogo: SKLabelNode!
     var bestScore: SKLabelNode!
-    var playButton:SKShapeNode!
+    var playButton: SKShapeNode!
     
+    var boardWidth: Int!
+    var boardHeight: Int!
     var currentScore: SKLabelNode!
     var playerPositions: [(Int, Int)]=[]
     var gameBackground: SKShapeNode!
@@ -22,11 +24,43 @@ class GameScene: SKScene {
     
     var game: GameManager!
     
+    
+    
     override func didMove(to view: SKView) {
         initializeMenu()
         game = GameManager(scene: self)
         initializeGameView()
+        
+        let swipeLeft:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeL))
+        swipeLeft.direction = .left
+        view.addGestureRecognizer(swipeLeft)
+        
+        let swipeRight:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeR))
+        swipeRight.direction = .right
+        view.addGestureRecognizer(swipeRight)
+        
+        let swipeUp:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeU))
+        swipeUp.direction = .up
+        view.addGestureRecognizer(swipeUp)
+        
+        let swipeDown:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeD))
+        swipeDown.direction = .down
+        view.addGestureRecognizer(swipeDown)
     }
+    
+    @objc func swipeL() {
+        game.swipe(id: GameManager.snakeDirections.left)
+    }
+    @objc func swipeR() {
+        game.swipe(id: GameManager.snakeDirections.right)
+    }
+    @objc func swipeU() {
+        game.swipe(id: GameManager.snakeDirections.up)
+    }
+    @objc func swipeD() {
+        game.swipe(id: GameManager.snakeDirections.down)
+    }
+
     
     
    
@@ -43,11 +77,13 @@ class GameScene: SKScene {
             
     }
     
+    
+    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        game.update(time: currentTime)
     }
     private func initializeMenu(){
-        
         
         gamelogo = SKLabelNode(fontNamed: "ArialRoundedMTBold")
         gamelogo.zPosition = 1
@@ -130,6 +166,8 @@ class GameScene: SKScene {
     
 //    creates cells board
     private func createGameBoard(width: Int, height: Int, cellWidth: CGFloat, numRows: Int, numCols: Int) {
+        boardWidth = numCols
+        boardHeight = numRows
         var x = CGFloat(width / -2) + (cellWidth / 2)
         var y = CGFloat(height / 2) - (cellWidth / 2)
         for row in 0...numRows - 1 {
