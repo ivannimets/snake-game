@@ -14,6 +14,7 @@ class GameScene: SKScene {
     var gamelogo: SKLabelNode!
     var bestScore: SKLabelNode!
     var playButton: SKShapeNode!
+    var scorePos: CGPoint?
     
     var boardWidth: Int!
     var boardHeight: Int!
