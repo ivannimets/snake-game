@@ -15,7 +15,7 @@ class GameManager {
     
     
     enum snakeDirections {
-        case up, right, down, left
+        case up, right, down, left, dead
     }
     
     var playerDirection = snakeDirections.down
@@ -59,6 +59,8 @@ class GameManager {
                 nextTime = time + timeExtension
                 updatePlayerPosition()
                 checkForScore()
+                checkForDeath()
+                finishAnimation()
             }
         }
     }
@@ -83,7 +85,10 @@ class GameManager {
             xChange = -1
             yChange = 0
             break
-            
+        case .dead:
+            xChange = 0
+            yChange = 0
+            break
         }
         
         if scene.playerPositions.count > 0 {
@@ -138,8 +143,47 @@ class GameManager {
         }
     }
     
+    private func checkForDeath() {
+        if scene.playerPositions.count > 0 {
+            var arrayOfPositions = scene.playerPositions
+            let headOfSnake = arrayOfPositions[0]
+            arrayOfPositions.remove(at: 0)
+            if Utils.contais(array: arrayOfPositions, point: headOfSnake) {
+                playerDirection = .dead
+                
+            }
+        }
+    }
     
-    
-    
-    
+    private func finishAnimation() {
+        if playerDirection == .dead && scene.playerPositions.count > 0 {
+            var hasFinished = true
+            let headOfSnake = scene.playerPositions[0]
+            for position in scene.playerPositions {
+                if headOfSnake != position {
+                    hasFinished = false
+                }
+            }
+            
+            if hasFinished {
+                print("end game")
+                playerDirection = .up
+                scene.scorePos = nil
+                scene.playerPositions.removeAll()
+                renderChange()
+                scene.currentScore.run(SKAction.scale(to: 0, duration: 0.4)) {
+                    self.scene.currentScore.isHidden = true
+                }
+                scene.gameBackground.run(SKAction.scale(to: 0, duration: 0.4)) {
+                    self.scene.gameBackground.isHidden = true
+                    self.scene.gamelogo.isHidden = false
+                    self.scene.gamelogo.run(SKAction.move(to: CGPoint(x: 0, y: (self.scene.frame.size.height / 2) - 200), duration: 0.5)) {
+                        self.scene.playButton.isHidden = false
+                        self.scene.playButton.run(SKAction.scale(to: 1, duration: 0.3))
+                        self.scene.bestScore.run(SKAction.move(to: CGPoint(x: 0, y: self.scene.gamelogo.position.y - 50), duration: 0.3))
+                    }
+                }
+            }
+        }
+    }
 }
